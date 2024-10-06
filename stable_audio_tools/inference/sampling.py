@@ -24,6 +24,8 @@ def t_to_alpha_sigma(t):
 @torch.no_grad()
 def sample_discrete_euler(model, x, steps, sigma_max=1, **extra_args):
     """Draws samples from a model given starting noise. Euler method"""
+    print("Discrete Euler")
+    print(**extra_args)
 
     # Make tensor of ones to broadcast the single t values
     ts = x.new_ones([x.shape[0]])
@@ -39,6 +41,7 @@ def sample_discrete_euler(model, x, steps, sigma_max=1, **extra_args):
                 (x.shape[0],), dtype=x.dtype, device=x.device
             )
             dt = t_prev - t_curr  # we solve backwards in our formulation
+            print(x)
             x = x + dt * model(x, t_curr_tensor, **extra_args) #.denoise(x, denoiser, t_curr_tensor, cond, uc)
 
     # If we are on the last timestep, output the denoised image
