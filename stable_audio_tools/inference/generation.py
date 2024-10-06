@@ -154,6 +154,8 @@ def generate_diffusion_cond(
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
+    print("Conditioning Inputs")
+    print(conditioning_inputs)
 
     if negative_conditioning is not None or negative_conditioning_tensors is not None:
         
@@ -222,7 +224,7 @@ def generate_diffusion_cond(
     print("Noise: ")
     print(noise)
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    print("Conditioning INpiuts: ")
+    print("Conditioning Inputs: ")
     print(conditioning_inputs)
     # Now the generative AI part:
     # k-diffusion denoising process go!
