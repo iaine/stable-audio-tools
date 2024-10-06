@@ -99,7 +99,7 @@ def generate_diffusion_cond(
         sample_size: int = 2097152,
         sample_rate: int = 48000,
         seed: int = -1,
-        device: str = "cpu",
+        device: str = "cuda",
         init_audio: tp.Optional[tp.Tuple[int, torch.Tensor]] = None,
         init_noise_level: float = 1.0,
         mask_args: dict = None,
