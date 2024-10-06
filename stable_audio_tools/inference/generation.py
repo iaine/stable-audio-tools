@@ -99,7 +99,7 @@ def generate_diffusion_cond(
         sample_size: int = 2097152,
         sample_rate: int = 48000,
         seed: int = -1,
-        device: str = "cuda",
+        device: str = "cpu",
         init_audio: tp.Optional[tp.Tuple[int, torch.Tensor]] = None,
         init_noise_level: float = 1.0,
         mask_args: dict = None,
@@ -132,15 +132,18 @@ def generate_diffusion_cond(
     # If this is latent diffusion, change sample_size instead to the downsampled latent size
     if model.pretransform is not None:
         sample_size = sample_size // model.pretransform.downsampling_ratio
-        
+        print("Sample Size changed: ")
+        print(sample_size)
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
+    print("seed")
     print(seed)
     torch.manual_seed(seed)
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-
+    print("Initial Noise: ")
+    print(noise)
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
     torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
@@ -213,13 +216,20 @@ def generate_diffusion_cond(
         mask = None
 
     model_dtype = next(model.model.parameters()).dtype
+    print("Model Data Type: ")
+    print(model_dtype)
     noise = noise.type(model_dtype)
+    print("Noise: ")
+    print(noise)
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
+    print("Conditioning INpiuts: ")
+    print(conditioning_inputs)
     # Now the generative AI part:
     # k-diffusion denoising process go!
 
     diff_objective = model.diffusion_objective
-
+    print("Diff Objective: ")
+    print(diff_objective)
     if diff_objective == "v":    
         # k-diffusion denoising process go!
         sampled = sample_k(model.model, noise, init_audio, mask, steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
@@ -232,7 +242,8 @@ def generate_diffusion_cond(
             del sampler_kwargs["sampler_type"]
 
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
-
+    print("sampled: ")
+    print(sampled)
     # v-diffusion: 
     #sampled = sample(model.model, noise, steps, 0, **conditioning_tensors, embedding_scale=cfg_scale)
     del noise
@@ -245,7 +256,8 @@ def generate_diffusion_cond(
         #cast sampled latents to pretransform dtype
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
-
+        print("Latent Diffussion: ")
+    print(sampled)
     # Return audio
     return sampled
 
