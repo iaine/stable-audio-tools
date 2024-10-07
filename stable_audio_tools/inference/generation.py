@@ -157,11 +157,11 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
-        print("conditioning tensors")
-        print(conditioning_tensors.keys())
-        print(conditioning_tensors["prompt"].shape)
-        print(conditioning_tensors["prompt"])
-        print(conditioning_tensors)
+    print("conditioning tensors")
+    print(conditioning_tensors.keys())
+    print(conditioning_tensors["prompt"].shape)
+    print(conditioning_tensors["prompt"])
+    print(conditioning_tensors)
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
     print("Conditioning Inputs")
     print(conditioning_inputs)
