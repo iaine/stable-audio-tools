@@ -99,7 +99,7 @@ def generate_diffusion_cond(
         sample_size: int = 2097152,
         sample_rate: int = 48000,
         seed: int = -1,
-        device: str = "cuda",
+        device: str = "cpu",
         init_audio: tp.Optional[tp.Tuple[int, torch.Tensor]] = None,
         init_noise_level: float = 1.0,
         mask_args: dict = None,
@@ -225,6 +225,7 @@ def generate_diffusion_cond(
     print(noise)
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
     print("Conditioning Inputs: ")
+    print(conditioning_inputs.keys())
     print(conditioning_inputs)
     # Now the generative AI part:
     # k-diffusion denoising process go!
@@ -251,7 +252,7 @@ def generate_diffusion_cond(
     del noise
     del conditioning_tensors
     del conditioning_inputs
-    torch.cuda.empty_cache()
+    #torch.cuda.empty_cache()
     # Denoising process done. 
     # If this is latent diffusion, decode latents back into audio
     if model.pretransform is not None and not return_latents:
