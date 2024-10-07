@@ -101,7 +101,7 @@ def generate_diffusion_cond(
         sample_size: int = 2097152,
         sample_rate: int = 48000,
         seed: int = -1,
-        device: str = "cpu",
+        device: str = "cuda",
         init_audio: tp.Optional[tp.Tuple[int, torch.Tensor]] = None,
         init_noise_level: float = 1.0,
         mask_args: dict = None,
@@ -157,6 +157,8 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
+        print("conditioning tensors")
+        print(conditioning_tensors)
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
     print("Conditioning Inputs")
     print(conditioning_inputs)
