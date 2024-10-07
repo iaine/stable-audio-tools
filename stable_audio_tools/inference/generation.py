@@ -4,6 +4,8 @@ import typing as tp
 import math 
 from torchaudio import transforms as T
 
+import traceback
+
 from .utils import prepare_audio
 from .sampling import sample, sample_k, sample_rf
 from ..data.utils import PadCrop
@@ -125,7 +127,9 @@ def generate_diffusion_cond(
         return_latents: Whether to return the latents used for generation instead of the decoded audio.
         **sampler_kwargs: Additional keyword arguments to pass to the sampler.    
     """
-
+    stack = traceback.extract_stack()
+    (filename, line, procname, text) = stack[-1]
+    print("Inside {} {} {} {}".format(filename, line, procname, text))
     # The length of the output in audio samples 
     audio_sample_size = sample_size
 
