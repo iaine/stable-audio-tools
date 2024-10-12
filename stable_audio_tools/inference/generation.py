@@ -271,6 +271,7 @@ def generate_diffusion_cond(
         sampled = model.pretransform.decode(sampled)
         print("Latent Diffussion: ")
     print(sampled)
+    print(sampled.shape)
     # Return audio
     return sampled
 
