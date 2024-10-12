@@ -160,7 +160,6 @@ def generate_diffusion_cond(
     print("conditioning tensors")
     print(type(conditioning_tensors))
     print(conditioning_tensors.keys())
-    print(conditioning_tensors["prompt"].shape)
     print(conditioning_tensors["prompt"])
     print(conditioning_tensors)
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
