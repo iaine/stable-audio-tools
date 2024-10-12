@@ -158,6 +158,7 @@ def generate_diffusion_cond(
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
     print("conditioning tensors")
+    print(type(conditioning_tensors))
     print(conditioning_tensors.keys())
     print(conditioning_tensors["prompt"].shape)
     print(conditioning_tensors["prompt"])
