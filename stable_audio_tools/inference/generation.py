@@ -274,7 +274,7 @@ def generate_diffusion_cond(
     print(sampled)
     print(sampled.shape)
     # Return audio
-    return sampled
+    return (conditioning_tensors["prompt"][0][0], sampled)
 
 # builds a softmask given the parameters
 # returns array of values 0 to 1, size sample_size, where 0 means noise / fresh generation, 1 means keep the input audio, 
