@@ -263,7 +263,7 @@ def generate_diffusion_cond(
     del noise
     del conditioning_tensors
     del conditioning_inputs
-    #torch.cuda.empty_cache()
+    torch.cuda.empty_cache()
     # Denoising process done. 
     # If this is latent diffusion, decode latents back into audio
     if model.pretransform is not None and not return_latents:
