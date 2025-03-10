@@ -135,6 +135,8 @@ def generate_diffusion_cond(
     """
     trace = {}
     trace["initseed"]={"data":seed, "time": datetime.now()} 
+    trace["cfg_scale"]={"data":cfg_scale, "time": datetime.now()}
+    trace["diffusion_steps"]={"data":steps, "time": datetime.now()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     print("Inside {} {} {} {}".format(filename, line, procname, text))
