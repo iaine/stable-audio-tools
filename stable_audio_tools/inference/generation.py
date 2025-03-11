@@ -246,8 +246,6 @@ def generate_diffusion_cond(
     trace["noise"]={"data":noise, "time": datetime.now()}
 
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    print("Conditioning Inputs: ")
-    print(conditioning_inputs.keys())
     trace["conditioning_inputs1"]={"data":conditioning_inputs, "time": datetime.now()}
 
     # Now the generative AI part:
@@ -286,7 +284,7 @@ def generate_diffusion_cond(
         sampled = model.pretransform.decode(sampled)
 
     trace["sampled2"]={"data":sampled, "time": datetime.now()}
-    with open('test.json', 'w') as fh: fh.write(json.dumps(trace, default=str))
+    print(json.dumps(trace, default=str))
     # Return audio
     return sampled
 
