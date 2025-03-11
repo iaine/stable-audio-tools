@@ -286,7 +286,7 @@ def generate_diffusion_cond(
         sampled = model.pretransform.decode(sampled)
 
     trace["sampled2"]={"data":sampled, "time": datetime.now()}
-    print(json.dumps(trace))
+    with open('test.json', 'w') as fh: fh.write(json.dumps(trace))
     # Return audio
     return sampled
 
