@@ -138,9 +138,9 @@ def generate_diffusion_cond(
     trace["cfg_scale"]={"data":cfg_scale, "time": datetime.timestamp()}
     trace["diffusion_steps"]={"data":steps, "time": datetime.timestamp()}
     trace["model"]={"data":model, "time": datetime.timestamp()}
-    stack = traceback.extract_stack()
-    (filename, line, procname, text) = stack[-1]
-    print("Inside {} {} {} {}".format(filename, line, procname, text))
+    #stack = traceback.extract_stack()
+    #(filename, line, procname, text) = stack[-1]
+    #print("Inside {} {} {} {}".format(filename, line, procname, text))
     # The length of the output in audio samples 
     audio_sample_size = sample_size
     trace["initsample_size"]={"data":audio_sample_size, "time": datetime.timestamp()} 
@@ -253,7 +253,6 @@ def generate_diffusion_cond(
     # k-diffusion denoising process go!
 
     diff_objective = model.diffusion_objective
-    print("Diff Objective: ")
     trace["diff_objective"]={"data":diff_objective, "time": datetime.timestamp()}
 
     if diff_objective == "v":    
