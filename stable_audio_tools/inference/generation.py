@@ -134,15 +134,16 @@ def generate_diffusion_cond(
         **sampler_kwargs: Additional keyword arguments to pass to the sampler.    
     """
     trace = {}
-    trace["initseed"]={"data":seed, "time": datetime.now()} 
-    trace["cfg_scale"]={"data":cfg_scale, "time": datetime.now()}
-    trace["diffusion_steps"]={"data":steps, "time": datetime.now()}
+    trace["initseed"]={"data":seed, "time": datetime.timestamp()} 
+    trace["cfg_scale"]={"data":cfg_scale, "time": datetime.timestamp()}
+    trace["diffusion_steps"]={"data":steps, "time": datetime.timestamp()}
+    trace["model"]={"data":model, "time": datetime.timestamp()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     print("Inside {} {} {} {}".format(filename, line, procname, text))
     # The length of the output in audio samples 
     audio_sample_size = sample_size
-    trace["initsample_size"]={"data":audio_sample_size, "time": datetime.now()} 
+    trace["initsample_size"]={"data":audio_sample_size, "time": datetime.timestamp()} 
 
     # If this is latent diffusion, change sample_size instead to the downsampled latent size
     if model.pretransform is not None:
@@ -151,17 +152,17 @@ def generate_diffusion_cond(
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    trace["seed"]={"data":seed, "time": datetime.now()}
+    trace["seed"]={"data":seed, "time": datetime.timestamp()}
 
     torch.manual_seed(seed)
 
-    trace["batch_size"]={"data":batch_size, "time": datetime.now()}
-    trace["io_channels"]={"data":model.io_channels, "time": datetime.now()}
-    trace["sample_size"]={"data":sample_size, "time": datetime.now()}
+    trace["batch_size"]={"data":batch_size, "time": datetime.timestamp()}
+    trace["io_channels"]={"data":model.io_channels, "time": datetime.timestamp()}
+    trace["sample_size"]={"data":sample_size, "time": datetime.timestamp()}
     
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-    trace["noise"]={"data":noise, "time": datetime.now()}
+    trace["noise"]={"data":noise, "time": datetime.timestamp()}
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
     torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
@@ -171,10 +172,10 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
-    trace["conditioning_tensors"]={"data":conditioning_tensors, "time": datetime.now()}
+    trace["conditioning_tensors"]={"data":conditioning_tensors, "time": datetime.timestamp()}
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
-    trace["conditioning_inputs"]={"data":conditioning_inputs, "time": datetime.now()}
+    trace["conditioning_inputs"]={"data":conditioning_inputs, "time": datetime.timestamp()}
 
     if negative_conditioning is not None or negative_conditioning_tensors is not None:
         
@@ -184,7 +185,7 @@ def generate_diffusion_cond(
         negative_conditioning_tensors = model.get_conditioning_inputs(negative_conditioning_tensors, negative=True)
     else:
         negative_conditioning_tensors = {}
-    trace["negativeconditioning_tensors"]={"data":negative_conditioning_tensors, "time": datetime.now()}
+    trace["negativeconditioning_tensors"]={"data":negative_conditioning_tensors, "time": datetime.timestamp()}
 
     if init_audio is not None:
         # The user supplied some initial audio (for inpainting or variation). Let us prepare the input audio.
@@ -239,21 +240,21 @@ def generate_diffusion_cond(
 
     model_dtype = next(model.model.parameters()).dtype
 
-    trace["model_dtype"]={"data":model_dtype, "time": datetime.now()}
+    trace["model_dtype"]={"data":model_dtype, "time": datetime.timestamp()}
 
     noise = noise.type(model_dtype)
 
-    trace["noise"]={"data":noise, "time": datetime.now()}
+    trace["noise"]={"data":noise, "time": datetime.timestamp()}
 
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    trace["conditioning_inputs1"]={"data":conditioning_inputs, "time": datetime.now()}
+    trace["conditioning_inputs1"]={"data":conditioning_inputs, "time": datetime.timestamp()}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
 
     diff_objective = model.diffusion_objective
     print("Diff Objective: ")
-    trace["diff_objective"]={"data":diff_objective, "time": datetime.now()}
+    trace["diff_objective"]={"data":diff_objective, "time": datetime.timestamp()}
 
     if diff_objective == "v":    
         # k-diffusion denoising process go!
@@ -268,7 +269,7 @@ def generate_diffusion_cond(
 
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
 
-    trace["sampled"]={"data":sampled, "time": datetime.now()}
+    trace["sampled"]={"data":sampled, "time": datetime.timestamp()}
 
     # v-diffusion: 
     #sampled = sample(model.model, noise, steps, 0, **conditioning_tensors, embedding_scale=cfg_scale)
@@ -283,8 +284,8 @@ def generate_diffusion_cond(
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
 
-    trace["sampled2"]={"data":sampled, "time": datetime.now()}
-    print(json.dumps(trace, default=str))
+    trace["sampled2"]={"data":sampled, "time": datetime.timestamp()}
+    print(json.dumps(trace))
     # Return audio
     return sampled
 
