@@ -308,6 +308,11 @@ def generate_diffusion_cond(
     del conditioning_tensors
     del conditioning_inputs
     torch.cuda.empty_cache()
+    trace["model.pretransform"]={"data":model.pretransform, "time": datetime.timestamp()}
+    stack = traceback.extract_stack()
+    (filename, line, procname, text) = stack[-1]
+    keys.append({"name": "model.pretransform", "fname": filename, "line": line, "text": text, "keys": "", "types": type(model.pretransform)})
+
     # Denoising process done. 
     # If this is latent diffusion, decode latents back into audio
     if model.pretransform is not None and not return_latents:
