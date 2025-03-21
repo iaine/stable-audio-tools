@@ -133,7 +133,6 @@ def generate_diffusion_cond(
         return_latents: Whether to return the latents used for generation instead of the decoded audio.
         **sampler_kwargs: Additional keyword arguments to pass to the sampler.    
     """
-    software = {}
     keys = []
     trace = {}
     trace["initseed"]={"data":seed, "time": datetime.timestamp()} 
