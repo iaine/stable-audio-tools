@@ -326,11 +326,12 @@ def generate_diffusion_cond(
     print("keys")
     k = json.dumps(keys)
     print(k)
-    with open("iainemsley/keys.json", "w") as fh: fh.write(k)
+    #with open("iainemsley/keys.json", "w") as fh: fh.write(k)
     print("tracing")
     t = json.dumps(trace)
-    with open("iainemsley/trace.json", "w") as fh: fh.write(t)
+    #with open("iainemsley/trace.json", "w") as fh: fh.write(t)
     print(json.dumps(t))
+    if return_latents: sampled = k + t
     # Return audio
     return sampled
 
