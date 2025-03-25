@@ -202,7 +202,8 @@ def generate_diffusion_cond(
     trace["negativeconditioning_tensors"]={"data":negative_conditioning_tensors}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
-    keys.append({"name": "negative_conditioning", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning.keys()], "types": [type(k) for k in negative_conditioning.keys() ]})
+    if negative_conditioning is not None:
+        keys.append({"name": "negative_conditioning", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning.keys()], "types": [type(k) for k in negative_conditioning.keys() ]})
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "negative_conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning_tensors.keys()], "types": [type(k) for k in negative_conditioning_tensors.keys() ]})
