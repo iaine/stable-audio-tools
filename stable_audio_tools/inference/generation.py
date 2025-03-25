@@ -135,10 +135,10 @@ def generate_diffusion_cond(
     """
     keys = []
     trace = {}
-    trace["initseed"]={"data":seed, "time": datetime.timestamp()} 
-    trace["cfg_scale"]={"data":cfg_scale, "time": datetime.timestamp()}
-    trace["diffusion_steps"]={"data":steps, "time": datetime.timestamp()}
-    trace["model"]={"data":model, "time": datetime.timestamp()}
+    trace["initseed"]={"data":seed} 
+    trace["cfg_scale"]={"data":cfg_scale}
+    trace["diffusion_steps"]={"data":steps}
+    trace["model"]={"data":model}
     
     
     #print("Inside {} {} {} {}".format(filename, line, procname, text))
@@ -147,7 +147,7 @@ def generate_diffusion_cond(
     (filename, line, procname, text) = stack[-1]
     audio_sample_size = sample_size
     keys.append({"name": "audio_sample_size", "fname": filename, "line": line, "text": text, "keys": "", "types": type(audio_sample_size)})
-    trace["initsample_size"]={"data":audio_sample_size, "time": datetime.timestamp()} 
+    trace["initsample_size"]={"data":audio_sample_size} 
 
     # If this is latent diffusion, change sample_size instead to the downsampled latent size
     if model.pretransform is not None:
@@ -156,19 +156,19 @@ def generate_diffusion_cond(
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    trace["seed"]={"data":seed, "time": datetime.timestamp()}
+    trace["seed"]={"data":seed}
 
     torch.manual_seed(seed)
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "seed", "fname": filename, "line": line, "text": text, "keys": "", "types": type(seed)})
-    trace["batch_size"]={"data":batch_size, "time": datetime.timestamp()}
-    trace["io_channels"]={"data":model.io_channels, "time": datetime.timestamp()}
-    trace["sample_size"]={"data":sample_size, "time": datetime.timestamp()}
+    trace["batch_size"]={"data":batch_size}
+    trace["io_channels"]={"data":model.io_channels}
+    trace["sample_size"]={"data":sample_size}
     
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-    trace["noise"]={"data":noise, "time": datetime.timestamp()}
+    trace["noise"]={"data":noise}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "noise", "fname": filename, "line": line, "text": text, "keys": "", "types": type(noise)})
@@ -181,13 +181,13 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
-    trace["conditioning_tensors"]={"data":conditioning_tensors, "time": datetime.timestamp()}
+    trace["conditioning_tensors"]={"data":conditioning_tensors}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_tensors.keys()], "types": [type(k) for k in conditioning_tensors.keys() ]})
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
-    trace["conditioning_inputs"]={"data":conditioning_inputs, "time": datetime.timestamp()}
+    trace["conditioning_inputs"]={"data":conditioning_inputs}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_inputs.keys()], "types": [type(k) for k in conditioning_inputs.keys() ]})
@@ -199,7 +199,7 @@ def generate_diffusion_cond(
         negative_conditioning_tensors = model.get_conditioning_inputs(negative_conditioning_tensors, negative=True)
     else:
         negative_conditioning_tensors = {}
-    trace["negativeconditioning_tensors"]={"data":negative_conditioning_tensors, "time": datetime.timestamp()}
+    trace["negativeconditioning_tensors"]={"data":negative_conditioning_tensors}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "negative_conditioning", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning.keys()], "types": [type(k) for k in negative_conditioning.keys() ]})
@@ -260,25 +260,25 @@ def generate_diffusion_cond(
 
     model_dtype = next(model.model.parameters()).dtype
 
-    trace["model_dtype"]={"data":model_dtype, "time": datetime.timestamp()}
+    trace["model_dtype"]={"data":model_dtype}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "model_dtype", "fname": filename, "line": line, "text": text, "keys": "", "types": type[model_dtype]})
  
     noise = noise.type(model_dtype)
 
-    trace["noise"]={"data":noise, "time": datetime.timestamp()}
+    trace["noise"]={"data":noise}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "noise", "fname": filename, "line": line, "text": text, "keys": "", "types": type[noise]})
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    trace["conditioning_inputs1"]={"data":conditioning_inputs, "time": datetime.timestamp()}
+    trace["conditioning_inputs1"]={"data":conditioning_inputs}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
 
     diff_objective = model.diffusion_objective
-    trace["diff_objective"]={"data":diff_objective, "time": datetime.timestamp()}
+    trace["diff_objective"]={"data":diff_objective}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "diff_objective", "fname": filename, "line": line, "text": text, "keys": "", "types": type[diff_objective]})
@@ -296,7 +296,7 @@ def generate_diffusion_cond(
 
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
 
-    trace["sampled"]={"data":sampled, "time": datetime.timestamp()}
+    trace["sampled"]={"data":sampled}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "sampled", "fname": filename, "line": line, "text": text, "keys": "", "types": type(sampled)})
@@ -307,7 +307,7 @@ def generate_diffusion_cond(
     del conditioning_tensors
     del conditioning_inputs
     torch.cuda.empty_cache()
-    trace["model.pretransform"]={"data":model.pretransform, "time": datetime.timestamp()}
+    trace["model.pretransform"]={"data":model.pretransform}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "model.pretransform", "fname": filename, "line": line, "text": text, "keys": "", "types": type(model.pretransform)})
@@ -319,7 +319,7 @@ def generate_diffusion_cond(
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
 
-    trace["sampled2"]={"data":sampled, "time": datetime.timestamp()}
+    trace["sampled2"]={"data":sampled}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "sampled", "fname": filename, "line": line, "text": text, "keys": sampled, "types": sampled})
