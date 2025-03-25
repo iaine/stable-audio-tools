@@ -273,7 +273,7 @@ def generate_diffusion_cond(
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "noise", "fname": filename, "line": line, "text": text, "keys": "", "types": type[noise]})
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    trace["conditioning_inputs1"]={"data":conditioning_inputs.cpu().numpy().tolist()}
+    trace["conditioning_inputs1"]={"data":conditioning_inputs}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
