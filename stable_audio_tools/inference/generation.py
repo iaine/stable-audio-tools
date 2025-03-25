@@ -323,15 +323,8 @@ def generate_diffusion_cond(
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "sampled", "fname": filename, "line": line, "text": text, "keys": sampled, "types": sampled})
-    print("keys")
-    k = json.dumps(keys)
-    print(k)
-    #with open("iainemsley/keys.json", "w") as fh: fh.write(k)
-    print("tracing")
-    t = json.dumps(trace)
-    #with open("iainemsley/trace.json", "w") as fh: fh.write(t)
-    print(json.dumps(t))
-    if return_latents: sampled = k + t
+
+    sampled = json.dumps({"keys":keys, "trace":trace})
     # Return audio
     return sampled
 
