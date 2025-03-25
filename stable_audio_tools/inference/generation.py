@@ -168,7 +168,7 @@ def generate_diffusion_cond(
     
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-    trace["noise"]={"data":noise}
+    trace["noise"]={"data":noise.cpu().numpy().tolist()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "noise", "fname": filename, "line": line, "text": text, "keys": "", "types": type(noise)})
@@ -181,13 +181,13 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
-    trace["conditioning_tensors"]={"data":conditioning_tensors}
+    trace["conditioning_tensors"]={"data":conditioning_tensors.cpu().numpy().tolist()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_tensors.keys()], "types": [type(k) for k in conditioning_tensors.keys() ]})
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
-    trace["conditioning_inputs"]={"data":conditioning_inputs}
+    trace["conditioning_inputs"]={"data":conditioning_inputs.cpu().numpy().tolist()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_inputs.keys()], "types": [type(k) for k in conditioning_inputs.keys() ]})
@@ -268,12 +268,12 @@ def generate_diffusion_cond(
  
     noise = noise.type(model_dtype)
 
-    trace["noise"]={"data":noise}
+    trace["noise"]={"data":noise.cpu().numpy().tolist()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "noise", "fname": filename, "line": line, "text": text, "keys": "", "types": type[noise]})
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    trace["conditioning_inputs1"]={"data":conditioning_inputs}
+    trace["conditioning_inputs1"]={"data":conditioning_inputs.cpu().numpy().tolist()}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
@@ -320,7 +320,7 @@ def generate_diffusion_cond(
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
 
-    trace["sampled2"]={"data":sampled}
+    trace["sampled2"]={"data":sampled.cpu().numpy().tolist()}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     keys.append({"name": "sampled", "fname": filename, "line": line, "text": text, "keys": sampled, "types": sampled})
