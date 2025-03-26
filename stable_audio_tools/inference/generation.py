@@ -32,16 +32,15 @@ def generate_diffusion_uncond(
     # If this is latent diffusion, change sample_size instead to the downsampled latent size
     if model.pretransform is not None:
         sample_size = sample_size // model.pretransform.downsampling_ratio
-    trace = {}
-    softwaretrace["initseed"]={"data":seed, "time": datetime.now()}       
+  
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    softwaretrace["seed"]={"data":seed, "time": datetime.now()}
+
     torch.manual_seed(seed)
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-    softwaretrace["initnoise"]={"data":noise, "time": datetime.now()}
+
     if init_audio is not None:
         # The user supplied some initial audio (for inpainting or variation). Let us prepare the input audio.
         in_sr, init_audio = init_audio
@@ -73,7 +72,7 @@ def generate_diffusion_uncond(
         mask = None 
     else:
         mask = None
-    softwaretrace["mask"]={"data":mask, "time": datetime.now()}
+
     # Now the generative AI part:
 
     diff_objective = model.diffusion_objective
@@ -83,8 +82,7 @@ def generate_diffusion_uncond(
         sampled = sample_k(model.model, noise, init_audio, mask, steps, **sampler_kwargs, device=device)
     elif diff_objective == "rectified_flow":
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, device=device)
-    softwaretrace["diffusion_objective"]={"data":diff_objective, "time": datetime.now()}
-    softwaretrace["sampled"]={"data":sampled, "time": datetime.now()}
+
 
     # Denoising process done. 
     # If this is latent diffusion, decode latents back into audio
