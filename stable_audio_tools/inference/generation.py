@@ -184,13 +184,13 @@ def generate_diffusion_cond(
     trace["conditioning_tensors"]={"data":conditioning_tensors}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
-    keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_tensors.keys()], "types": [type(k) for k in conditioning_tensors.keys() ]})
+    keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": list(conditioning_tensors.keys()), "types": [type(k) for k in conditioning_tensors.keys() ]})
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
     trace["conditioning_inputs"]={"data":conditioning_inputs}
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
-    keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [conditioning_inputs.keys()], "types": [type(k) for k in conditioning_inputs.keys() ]})
+    keys.append({"name": "conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": list(conditioning_inputs.keys()), "types": [type(k) for k in conditioning_inputs.keys() ]})
     if negative_conditioning is not None or negative_conditioning_tensors is not None:
         
         if negative_conditioning_tensors is None:
@@ -203,10 +203,10 @@ def generate_diffusion_cond(
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
     if negative_conditioning is not None:
-        keys.append({"name": "negative_conditioning", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning.keys()], "types": [type(k) for k in negative_conditioning.keys() ]})
+        keys.append({"name": "negative_conditioning", "fname": filename, "line": line, "text": text, "keys": list(negative_conditioning.keys()), "types": [type(k) for k in negative_conditioning.keys() ]})
     stack = traceback.extract_stack()
     (filename, line, procname, text) = stack[-1]
-    keys.append({"name": "negative_conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": [negative_conditioning_tensors.keys()], "types": [type(k) for k in negative_conditioning_tensors.keys() ]})
+    keys.append({"name": "negative_conditioning_tensors", "fname": filename, "line": line, "text": text, "keys": list(negative_conditioning_tensors.keys()), "types": [type(k) for k in negative_conditioning_tensors.keys() ]})
 
     if init_audio is not None:
         # The user supplied some initial audio (for inpainting or variation). Let us prepare the input audio.
