@@ -323,7 +323,7 @@ def generate_diffusion_cond(
     (filename, line, procname, text) = stack[-1]
     softwarekey.append({"name": "sampled", "fname": filename, "line": line, "text": text, "keys": sampled, "types": sampled})
 
-    sampled = json.dumps({"keys":softwarekey, "trace":softwaretrace})
+    sampled = json.dumps({"softwarekeys":softwarekey, "softwaretrace":softwaretrace})
     # Return audio
     return sampled
 
