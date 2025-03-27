@@ -295,7 +295,7 @@ def generate_diffusion_cond(
 
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
 
-    softwaretrace["sampled"]={"data":sampled.cpu().numpy().tolist()}
+    softwaretrace["sampled"]={"data":sampled.cpu().numpy().tolist(), "types": type(sampled)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "sampled",  "text": text, "keys": "", "types": type(sampled)})
@@ -318,7 +318,7 @@ def generate_diffusion_cond(
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
 
-    softwaretrace["sampled2"]={"data":sampled.cpu().numpy().tolist()}
+    softwaretrace["sampled2"]={"data":sampled.cpu().numpy().tolist(), "types": type(sampled)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "sampled", "text": text, "keys": sampled, "types": sampled})
