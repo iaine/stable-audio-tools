@@ -272,7 +272,7 @@ def generate_diffusion_cond(
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "noise", "text": text, "keys": "", "types": type[noise]})
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    softwaretrace["conditioning_inputs1"]={"data":conditioning_inputs['prompt'], "types": type(conditioning_inputs['prompt'])}
+    softwaretrace["conditioning_inputs1"]={"data":conditioning_inputs, "types": type(conditioning_inputs)}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
