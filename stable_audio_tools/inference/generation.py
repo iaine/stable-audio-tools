@@ -179,7 +179,7 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
-    softwaretrace["conditioning_tensors"]={"data":conditioning_tensors['prompt'].cpu().numpy().tolist(), "types": conditioning_tensors["prompt"]}
+    softwaretrace["conditioning_tensors"]={"data":conditioning_tensors['prompt'], "types": conditioning_tensors["prompt"]}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "conditioning_tensors", "text": text, "keys": list(conditioning_tensors.keys()), "types": [type(k) for k in conditioning_tensors.keys() ]})
