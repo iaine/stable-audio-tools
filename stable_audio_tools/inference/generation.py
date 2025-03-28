@@ -186,7 +186,7 @@ def generate_diffusion_cond(
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
     print(conditioning_inputs.keys())
-    softwaretrace["conditioning_inputs"]={"data":conditioning_inputs.cpu().numpy().tolist(), "types": conditioning_inputs}
+    softwaretrace["conditioning_inputs"]={"data":conditioning_inputs, "types": conditioning_inputs}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "conditioning_tensors", "text": text, "keys": list(conditioning_inputs.keys()), "types": [type(k) for k in conditioning_inputs.keys() ]})
