@@ -154,7 +154,7 @@ def generate_diffusion_cond(
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    softwaretrace["seed"]={"data":int(seed)}
+    #softwaretrace["seed"]={"data":int(seed)}
 
     torch.manual_seed(seed)
     #stack = traceback.extract_stack()
