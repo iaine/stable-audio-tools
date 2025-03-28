@@ -136,13 +136,13 @@ def generate_diffusion_cond(
     softwaretrace["initseed"]={"data":seed} 
     softwaretrace["cfg_scale"]={"data":cfg_scale}
     softwaretrace["diffusion_steps"]={"data":steps}
-    softwaretrace["model"]={"data":model}
+    #softwaretrace["model"]={"data":model}
     
     
     #print("Inside {} {} {} {}".format(filename, line, procname, text))
     # The length of the output in audio samples 
-    stack = traceback.extract_stack()
-    (filename, line, procname, text) = stack[-1]
+    #stack = traceback.extract_stack()
+    #(filename, line, procname, text) = stack[-1]
     audio_sample_size = sample_size
     #softwarekey.append({"name": "audio_sample_size", "text": text, "keys": "", "types": type(audio_sample_size)})
     softwaretrace["initsample_size"]={"data":audio_sample_size} 
