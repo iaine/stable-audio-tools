@@ -166,7 +166,7 @@ def generate_diffusion_cond(
     
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
-    softwaretrace["noise"]={"data":noise.cpu().numpy().tolist()}
+    #softwaretrace["noise"]={"data":noise.cpu().numpy().tolist()}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "noise", "text": text, "keys": "", "types": type(noise)})
@@ -179,6 +179,7 @@ def generate_diffusion_cond(
     assert conditioning is not None or conditioning_tensors is not None, "Must provide either conditioning or conditioning_tensors"
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
+    
     softwaretrace["conditioning_tensors"]={"data":conditioning_tensors['prompt'], "types": conditioning_tensors["prompt"]}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
