@@ -145,7 +145,7 @@ def generate_diffusion_cond(
     #(filename, line, procname, text) = stack[-1]
     audio_sample_size = sample_size
     #softwarekey.append({"name": "audio_sample_size", "text": text, "keys": "", "types": type(audio_sample_size)})
-    softwaretrace["initsample_size"]={"data":audio_sample_size} 
+    softwaretrace["initsample_size"]={"type":type(audio_sample_size)} 
 
     # If this is latent diffusion, change sample_size instead to the downsampled latent size
     if model.pretransform is not None:
@@ -154,15 +154,15 @@ def generate_diffusion_cond(
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    #softwaretrace["seed"]={"data":type(seed)}
+    softwaretrace["seed"]={"type":type(seed)}
     print(seed)
     torch.manual_seed(seed)
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "seed", "text": text, "keys": "", "types": type(seed)})
-    softwaretrace["batch_size"]={"data":batch_size}
-    softwaretrace["io_channels"]={"data":model.io_channels}
-    softwaretrace["sample_size"]={"data":sample_size}
+    softwaretrace["batch_size"]={"type":type(batch_size)}
+    softwaretrace["io_channels"]={"type":type(model.io_channels)}
+    softwaretrace["sample_size"]={"type":type(sample_size)}
     
     # Define the initial noise immediately after setting the seed
     noise = torch.randn([batch_size, model.io_channels, sample_size], device=device)
@@ -180,14 +180,17 @@ def generate_diffusion_cond(
     if conditioning_tensors is None:
         conditioning_tensors = model.conditioner(conditioning, device)
     
-    softwaretrace["conditioning_tensors"]={"data":conditioning_tensors['prompt'], "types": conditioning_tensors["prompt"]}
+    softwaretrace["conditioning_tensor"]={"type": conditioning_tensors}
+    softwaretrace["conditioning_tensor_keys"]={"type": conditioning_tensors.keys()}
+    softwaretrace["conditioning_tensor_prompt"]={"type": conditioning_tensors['prompt']}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "conditioning_tensors", "text": text, "keys": list(conditioning_tensors.keys()), "types": [type(k) for k in conditioning_tensors.keys() ]})
 
     conditioning_inputs = model.get_conditioning_inputs(conditioning_tensors)
     print(conditioning_inputs.keys())
-    softwaretrace["conditioning_inputs"]={"data":conditioning_inputs, "types": conditioning_inputs}
+    softwaretrace["conditioning_inputs"]={"type": conditioning_inputs}
+    softwaretrace["conditioning_inputs_keys"]={"type": conditioning_inputs.keys()}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "conditioning_tensors", "text": text, "keys": list(conditioning_inputs.keys()), "types": [type(k) for k in conditioning_inputs.keys() ]})
@@ -261,19 +264,19 @@ def generate_diffusion_cond(
 
     model_dtype = next(model.model.parameters()).dtype
 
-    softwaretrace["model_dtype"]={"data":model_dtype, "types": type(model_dtype)}
+    softwaretrace["model_dtype"]={"type": type(model_dtype)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "model_dtype", "text": text, "keys": "", "types": type[model_dtype]})
  
     noise = noise.type(model_dtype)
 
-    softwaretrace["noise"]={"data":"", "types": type(noise)}
+    softwaretrace["noise"]={"type": type(noise)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "noise", "text": text, "keys": "", "types": type[noise]})
     conditioning_inputs = {k: v.type(model_dtype) if v is not None else v for k, v in conditioning_inputs.items()}
-    softwaretrace["conditioning_inputs1"]={"data":conditioning_inputs, "types": type(conditioning_inputs)}
+    softwaretrace["conditioning_inputs1"]={"type": type(conditioning_inputs)}
 
     # Now the generative AI part:
     # k-diffusion denoising process go!
@@ -297,7 +300,7 @@ def generate_diffusion_cond(
 
         sampled = sample_rf(model.model, noise, init_data=init_audio, steps=steps, **sampler_kwargs, **conditioning_inputs, **negative_conditioning_tensors, cfg_scale=cfg_scale, batch_cfg=True, rescale_cfg=True, device=device)
 
-    softwaretrace["sampled"]={"data":sampled.cpu().numpy().tolist(), "types": type(sampled)}
+    softwaretrace["sampled"]={"type": type(sampled)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "sampled",  "text": text, "keys": "", "types": type(sampled)})
@@ -320,7 +323,7 @@ def generate_diffusion_cond(
         sampled = sampled.to(next(model.pretransform.parameters()).dtype)
         sampled = model.pretransform.decode(sampled)
 
-    softwaretrace["sampled2"]={"data":sampled.cpu().numpy().tolist(), "types": type(sampled)}
+    softwaretrace["sampled2"]={"type": type(sampled)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "sampled", "text": text, "keys": sampled, "types": sampled})
