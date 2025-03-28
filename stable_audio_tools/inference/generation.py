@@ -154,7 +154,7 @@ def generate_diffusion_cond(
     # Seed
     # The user can explicitly set the seed to deterministically generate the same output. Otherwise, use a random seed.
     seed = seed if seed != -1 else np.random.randint(0, 2**32 - 1, dtype=np.uint32)
-    #softwaretrace["seed"]={"data":int(seed)}
+    softwaretrace["seed"]={"data":type(seed)}
 
     torch.manual_seed(seed)
     #stack = traceback.extract_stack()
@@ -267,7 +267,7 @@ def generate_diffusion_cond(
  
     noise = noise.type(model_dtype)
 
-    softwaretrace["noise"]={"data":noise.cpu().numpy().tolist(), "types": type(noise)}
+    softwaretrace["noise"]={"data":"", "types": type(noise)}
     #stack = traceback.extract_stack()
     #(filename, line, procname, text) = stack[-1]
     #softwarekey.append({"name": "noise", "text": text, "keys": "", "types": type[noise]})
